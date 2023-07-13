@@ -16,7 +16,14 @@
 				"redhat.ansible",
 				"streetsidesoftware.code-spell-checker",
 				"eamodio.gitlens"
-			]
+			],
+			"settings": {
+				"cSpell.words": [],
+				"files.associations": {
+					"*.yaml": "ansible",
+				},
+				"ansible.python.interpreterPath": "/bin/python3"
+			}
 		}
 	}
 
