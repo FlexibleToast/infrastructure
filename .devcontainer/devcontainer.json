@@ -18,9 +18,13 @@
 				"eamodio.gitlens"
 			],
 			"settings": {
-				"cSpell.words": [],
+				"cSpell.words": [
+					"eamodio",
+					"Containerfile",
+					"infrastructure"
+				],
 				"files.associations": {
-					"*.yaml": "ansible",
+					"*.yaml": "ansible"
 				},
 				"ansible.python.interpreterPath": "/bin/python3"
 			}
