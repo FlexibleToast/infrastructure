@@ -1,6 +1,12 @@
-FROM rockylinux:9
+FROM redhat/ubi9
 
 RUN dnf update -y &&\
-    dnf install -y epel-release &&\
-    dnf install -y ansible &&\
+    dnf install -y python3 python3-pip git &&\
+    dnf clean all
+
+RUN pip install ansible ansible-lint &&\
+    pip cache purge
+
+RUN dnf config-manager --add-repo https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo &&\
+    dnf install -y terraform &&\
     dnf clean all
