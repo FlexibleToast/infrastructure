@@ -1,4 +1,4 @@
-FROM docker.io/redhat/ubi9:latest
+FROM registry.access.redhat.com/ubi9/ubi:latest
 
 RUN dnf update -y &&\
     dnf install -y python3 python3-pip git &&\
