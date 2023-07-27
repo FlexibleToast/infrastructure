@@ -18,15 +18,19 @@
                 "4ops.terraform",
                 "redhat.ansible",
                 "streetsidesoftware.code-spell-checker",
-                "eamodio.gitlens"
+                "eamodio.gitlens",
+                "genieai.chatgpt-vscode",
+                "4ops.packer"
             ],
             "settings": {
                 "cSpell.words": [
                     "eamodio",
                     "Containerfile",
-                    "infrastructure"
+                    "infrastructure",
+                    "genieai"
                 ],
                 "files.associations": {
+                    "*.yml": "ansible",
                     "*.yaml": "ansible"
                 },
                 "ansible.python.interpreterPath": "/bin/python3"

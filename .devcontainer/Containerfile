@@ -7,5 +7,5 @@ RUN dnf update -y &&\
 RUN pip install --no-cache-dir ansible ansible-lint
 
 RUN dnf config-manager --add-repo https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo &&\
-    dnf install -y terraform &&\
+    dnf install -y terraform packer &&\
     dnf clean all
