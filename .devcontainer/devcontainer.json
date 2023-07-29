@@ -15,12 +15,12 @@
     "customizations": {
         "vscode": {
             "extensions": [
-                "hashicorp.terraform",
-                "redhat.ansible",
-                "streetsidesoftware.code-spell-checker",
                 "eamodio.gitlens",
                 "genieai.chatgpt-vscode",
-                "4ops.packer"
+                "hashicorp.terraform",
+                "hashicorp.hcl",
+                "redhat.ansible",
+                "streetsidesoftware.code-spell-checker"
             ],
             "settings": {
                 "cSpell.words": [
