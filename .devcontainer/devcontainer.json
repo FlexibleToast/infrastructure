@@ -15,7 +15,7 @@
     "customizations": {
         "vscode": {
             "extensions": [
-                "4ops.terraform",
+                "hashicorp.terraform",
                 "redhat.ansible",
                 "streetsidesoftware.code-spell-checker",
                 "eamodio.gitlens",
