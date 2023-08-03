@@ -1,0 +1,40 @@
+---
+# tasks file for roles/destroy-terraform
+- name: Check if project path exists
+  ansible.builtin.stat:
+    path: "{{ tf_repo.directory }}/{{ vm_config.basename }}"
+  register: project_dir
+
+- name: Destroy and cleanup
+  when: project_dir.stat.exists
+  block:
+
+    - name: Check if terraform files exists
+      ansible.builtin.stat:
+        path: "{{ tf_repo.directory }}/{{ vm_config.basename }}/{{ item }}.vault"
+      loop:
+        - terraform.tfstate
+        - main.tf
+        - provider.tf
+      register: tf_files
+
+    - name: Decrypt terraform files
+      ansible.builtin.command:
+        cmd: >
+          ansible-vault decrypt {{ tf_repo.directory }}/{{ vm_config.basename }}/{{ item.item }}.vault
+            --output {{ tf_repo.directory }}/{{ vm_config.basename }}/{{ item.item }}
+        creates: "{{ tf_repo.directory }}/{{ vm_config.basename }}/{{ item.item }}"
+      loop: "{{ tf_files.results }}"
+      when: item.stat.exists
+
+    - name: Destroy with terraform
+      community.general.terraform:
+        project_path: "{{ tf_repo.directory }}/{{ vm_config.basename }}"
+        force_init: true
+        state: absent
+
+    - name: Remove project directory
+      ansible.builtin.file:
+        path: "{{ tf_repo.directory }}/{{ vm_config.basename }}"
+        state: absent
+# End block

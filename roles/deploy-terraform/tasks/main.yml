@@ -1,0 +1,73 @@
+---
+# tasks file for roles/deploy-terraform
+- name: Create terrafrom project directory
+  ansible.builtin.file:
+    path: "{{ tf_repo.directory }}/{{ vm_config.basename }}"
+    state: directory
+    mode: "660"
+  register: project_dir
+
+- name: Check for tfstate
+  when: not project_dir.changed
+  block:
+    - name: Check if terraform files exists
+      ansible.builtin.stat:
+        path: "{{ tf_repo.directory }}/{{ vm_config.basename }}/{{ item }}.vault"
+      loop:
+        - terraform.tfstate
+        - main.tf
+        - provider.tf
+      register: tf_files
+
+    - name: Decrypt terraform files
+      ansible.builtin.command:
+        cmd: >
+          ansible-vault decrypt {{ tf_repo.directory }}/{{ vm_config.basename }}/{{ item.item }}.vault
+            --output {{ tf_repo.directory }}/{{ vm_config.basename }}/{{ item.item }}
+        creates: "{{ tf_repo.directory }}/{{ vm_config.basename }}/{{ item.item }}"
+      loop: "{{ tf_files.results }}"
+      when: item.stat.exists
+
+    - name: Remove encrypted terraform files
+      ansible.builtin.file:
+        state: absent
+        path: "{{ tf_repo.directory }}/{{ vm_config.basename }}/{{ item.item }}.vault"
+      loop: "{{ tf_files.results }}"
+# End block
+
+- name: Create or modify terraform files
+  ansible.builtin.template:
+    src: "{{ item }}.tf.j2"
+    dest: "{{ tf_repo.directory }}/{{ vm_config.basename }}/{{ item }}.tf"
+    mode: "660"
+  loop:
+    - main
+    - provider
+
+- name: Deploy with terraform
+  community.general.terraform:
+    project_path: "{{ tf_repo.directory }}/{{ vm_config.basename }}"
+    state: present
+    force_init: true
+
+- name: Encrypt terraform files
+  ansible.builtin.command:
+    cmd: >
+      ansible-vault encrypt {{ tf_repo.directory }}/{{ vm_config.basename }}/{{ item }}
+        --output {{ tf_repo.directory }}/{{ vm_config.basename }}/{{ item }}.vault
+    creates: "{{ tf_repo.directory }}/{{ vm_config.basename }}/{{ item }}.vault"
+  loop:
+    - terraform.tfstate
+    - main.tf
+    - provider.tf
+
+- name: Remove unencrypted terraform files
+  ansible.builtin.file:
+    path: "{{ tf_repo.directory }}/{{ vm_config.basename }}/{{ item }}"
+    state: absent
+  loop:
+    - .terraform
+    - .terraform.lock.hcl
+    - main.tf
+    - provider.tf
+    - terraform.tfstate

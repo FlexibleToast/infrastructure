@@ -1,0 +1,4 @@
+---
+# defaults file for roles/register-redhat
+rhn_user:
+rhn_pass:

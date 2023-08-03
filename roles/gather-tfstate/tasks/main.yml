@@ -1,0 +1,33 @@
+---
+# tasks file for roles/gather-tfstate
+- name: Run localhost tasks
+  delegate_to: localhost
+  run_once: true
+  block:
+
+    - name: Decrypt terraform files
+      ansible.builtin.command:
+        cmd: >
+          ansible-vault decrypt {{ tf_repo.directory }}/{{ vm_config.basename }}/terraform.tfstate.vault
+            --output {{ tf_repo.directory }}/{{ vm_config.basename }}/terraform.tfstate
+        creates: "{{ tf_repo.directory }}/{{ vm_config.basename }}/terraform.tfstate"
+
+    - name: Set tfstate fact
+      ansible.builtin.set_fact:
+        tfstates: "{{ lookup('file', '{{ tf_repo.directory }}/{{ vm_config.basename }}/terraform.tfstate') | from_json }}"
+      failed_when: false
+
+    - name: Remove unencrypted tfstate
+      ansible.builtin.file:
+        state: absent
+        path: "{{ tf_repo.directory }}/{{ vm_config.basename }}/terraform.tfstate"
+# End block
+
+- name: Set tfstate per host
+  ansible.builtin.set_fact:
+    tfstate: "{{ (tfstates.resources[0].instances | selectattr('attributes.name', '==', inventory_hostname))[0] }}"
+
+- name: Set host facts
+  ansible.builtin.set_fact:
+    host_ip: "{{ tfstate.attributes.ssh_host }}"
+    ansible_user: "{{ vm_config.ciuser }}"

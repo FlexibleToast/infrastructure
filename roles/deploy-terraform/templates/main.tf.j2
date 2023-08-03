@@ -1,0 +1,58 @@
+terraform {
+{% if provider.type == "proxmox" %}
+  required_providers {
+    proxmox = {
+      source = "telmate/proxmox"
+    }
+  }
+{% endif %}
+}
+
+resource "proxmox_vm_qemu" "rhel-aap" {
+  count = {{ groups[group_name] | length }}
+  name = "{{ vm_config.basename }}-${count.index + 1}"
+  vmid = "${count.index + 300}"
+  tags = "{{ vm_config.host_tags }}"
+  target_node = "{{ vm_config.target_node }}"
+  clone = "{{ vm_config.template }}"
+  full_clone = {{ vm_config.full_clone | default('true') }}
+  pool = "{{ vm_config.pool | default(null) }}"
+  oncreate = {{ vm_config.on_create | default('true') }}
+  onboot = {{ vm_config.on_boot | default('true') }}
+  agent = {{ vm_config.agent | default('1') }}
+  bios = "{{ vm_config.bios | default('ovmf') }}"
+  cpu = "{{ vm_config.cpu | default('x86-64-v2-AES') }}"
+  cores = {{ vm_config.cores | default('2') }}
+  sockets = {{ vm_config.sockets | default('1') }}
+  balloon = "${1024 * {{ vm_config.min_memory | default('1') }}}"
+  memory = "${1024 * {{ vm_config.max_memory | default('2') }}}"
+  scsihw = "virtio-scsi-single"
+  cloudinit_cdrom_storage = "{{ vm_config.cloudinig_storage | default('local-zfs') }}"
+  ciuser = "{{ vm_config.ciuser }}"
+  sshkeys = <<-EOT
+{% for key in vm_config.sshkeys %}
+            {{ key.key }}
+{% endfor %}
+        EOT
+{% for disk in vm_config.disks %}
+  disk {
+    size = "{{ disk.size | default('50G') }}"
+    type = "{{ disk.type | default('scsi') }}"
+    storage = "{{ disk.storage | default('local-zfs') }}"
+    discard = "{{ disk.discard | default('on') }}"
+    ssd = "{{ disk.ssd | default('0') }}"
+    backup = {{ disk.backup | default('true') }}
+  }
+{% endfor %}
+  network {
+    bridge = "vmbr0"
+    firewall = true
+    link_down = false
+    model = "virtio"
+  }
+  lifecycle {
+    ignore_changes = [
+      qemu_os
+    ]
+  }
+}

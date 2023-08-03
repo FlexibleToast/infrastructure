@@ -1,0 +1,21 @@
+---
+# tasks file for roles/register-redhat
+- name: Register hosts with RHN
+  community.general.redhat_subscription:
+    state: present
+    username: "{{ rhn_user }}"
+    password: "{{ rhn_pass }}"
+  become: true
+
+- name: Update all packages # noqa: package-latest
+  ansible.builtin.dnf:
+    name: "*"
+    update_cache: true
+    state: latest
+  become: true
+  register: update_result
+
+- name: Reboot if needed # noqa: no-handler
+  ansible.builtin.reboot:
+  become: true
+  when: update_result.changed

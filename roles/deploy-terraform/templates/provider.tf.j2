@@ -1,0 +1,8 @@
+{% if provider.type == "proxmox" %}
+provider "proxmox" {
+  pm_api_url = "{{ provider.host }}"
+  pm_api_token_id = "{{ provider.token_id }}"
+  pm_api_token_secret = "{{ provider.token_secret }}"
+  pm_tls_insecure = {{ provider.tls_insecure | default('true') }}
+}
+{% endif %}

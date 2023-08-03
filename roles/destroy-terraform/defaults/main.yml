@@ -1,0 +1,8 @@
+---
+# defaults file for roles/destroy-terraform
+project:
+  name:
+tf_repo:
+  url:
+  token:
+  directory:

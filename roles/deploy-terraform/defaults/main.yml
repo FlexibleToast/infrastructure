@@ -1,0 +1,13 @@
+---
+# defaults file for roles/deploy-terraform
+provider:
+  type:
+  host:
+  token_id:
+  token_secret:
+project:
+  name:
+tf_repo:
+  url:
+  token:
+  directory:

@@ -1,0 +1,6 @@
+---
+# defaults file for roles/gather-tfstate
+project:
+  name:
+tf_repo:
+  directory:

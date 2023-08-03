@@ -1,0 +1,36 @@
+group_name: aap_host
+provider: workpad-t14s
+ssh_public_key: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC2ZbjQ2RiDDY8ftt6y2449txdGbvqS9A+DiecsfY\
+                4lywMWa3s9eSZXHfaDsn0c5yCEnjKVSRbmQrWlL8wowuBDc3mPEw9gmcrCqNsTcQdjQSph3ikdy5daz\
+                DTspXKHSS1PFEWUtSf6O9t/b56SCaMFHfRCSCTlJP0FiNuHMF1KPyW3Gl4W1UTH3rqz++fQh9//392I\
+                0TZOotMKVHN6IG6yB3b/nr+DlTtJnvlJPw8OAaaIMj0yDJAdwSuic5QKu1+p2kPPczmjrbwcDmIN1N5\
+                hBFPSeFYrdyePY/ZAFNc6NTkETxUq07Z/AYWXmjRBG2KnxNYl3gt03hNxA3TnXY+wxWCUCZbg3C/ol/\
+                YXmhBDQo2g3soUqyc1LKxRyHbBbhb0F7x3JiwFgG38mLwfR5LtmSZXvz4xnhs9L1mgVqyXVNpAMhBbE\
+                DuIhTGj/Gm7J6dluijywDFUCtcIvEF0u4pp8yZdHkxHh0VhR5a58Xd9tCS1XnzdDnSeCESi4nuBw6c="
+vm_config:
+  basename: rhel-aap
+  cores: 4
+  min_memory: 4
+  max_memory: 8
+  bios: seabios
+  host_tags: aap;el9;rhel
+  pool: aap
+  target_node: workpad-t14s
+  template: rhel-cloud
+  ciuser: "{{ ansible_user }}"
+  sshkeys:
+    - key: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC2ZbjQ2RiDDY8ftt6y2449txdGbvqS9A+DiecsfY\
+           4lywMWa3s9eSZXHfaDsn0c5yCEnjKVSRbmQrWlL8wowuBDc3mPEw9gmcrCqNsTcQdjQSph3ikdy5daz\
+           DTspXKHSS1PFEWUtSf6O9t/b56SCaMFHfRCSCTlJP0FiNuHMF1KPyW3Gl4W1UTH3rqz++fQh9//392I\
+           0TZOotMKVHN6IG6yB3b/nr+DlTtJnvlJPw8OAaaIMj0yDJAdwSuic5QKu1+p2kPPczmjrbwcDmIN1N5\
+           hBFPSeFYrdyePY/ZAFNc6NTkETxUq07Z/AYWXmjRBG2KnxNYl3gt03hNxA3TnXY+wxWCUCZbg3C/ol/\
+           YXmhBDQo2g3soUqyc1LKxRyHbBbhb0F7x3JiwFgG38mLwfR5LtmSZXvz4xnhs9L1mgVqyXVNpAMhBbE\
+           DuIhTGj/Gm7J6dluijywDFUCtcIvEF0u4pp8yZdHkxHh0VhR5a58Xd9tCS1XnzdDnSeCESi4nuBw6c="
+    - key: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCpe+0N1Jd+LX7tFDwisPlS4T2H/k5bpCVVmL1DFSm\
+           RKpnEVMSgB02VqHKQsIPISMHJ6LdEf9qDU1myOp3348zoACn+jvUxT+wlce7XpHVzD/1iOxRuohaDAx\
+           MDsqQs3bWSAqGOKYycBBUmvudQf0D8hgY6qi+3zw2uFKwMRgpJ3Llklb0dJpRtQmHQoObc1I3B39wdO\
+           Q59lZr8+JwG6/12q+plShwHkVcubAnQl/Ldi7uR3hhtHcYFS+nLgsqUuyd2hpZCC2uY5DqzI82xr4lr\
+           Z2pDn/jVp556C7PKdefOgxVUOG+/08Fg1tTGz0a8M4zIMrWTOlkkn072AX1f9suD"
+  disks:
+    - size: 80G
+      ssd: 1

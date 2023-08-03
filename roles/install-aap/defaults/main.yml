@@ -1,0 +1,13 @@
+---
+# defaults file for roles/install-aap
+aap:
+  repo: ansible-automation-platform-2.4-for-rhel-9-x86_64-rpms
+  admin_password:
+  pg_password:
+  registry_username:
+  registry_password:
+  license:
+ssh_private_key:
+ssh_public_key:
+domain:
+min_ram: "{{ vm_config.min_memory | int * 1000 | default('7400') }}"

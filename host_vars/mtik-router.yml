@@ -1,0 +1,5 @@
+ansible_host: "{{ router.ansible_host }}"
+ansible_connection: ansible.netcommon.network_cli
+ansible_network_os: community.routeros.routeros
+ansible_user: "{{ router.ansible_user }}"
+ansible_ssh_pass: "{{ router.ansible_ssh_pass }}"

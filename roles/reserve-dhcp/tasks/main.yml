@@ -1,0 +1,36 @@
+---
+# tasks file for roles/reserve-dhcp
+- name: Set static DHCP for DNS to work
+  block:
+
+    - name: Test connection via hostname
+      ansible.builtin.command:
+        cmd: ping -c 1 {{ inventory_hostname }}.{{ domain }}
+      delegate_to: localhost
+      changed_when: false
+
+  rescue:
+
+    - name: Remove DHCP lease
+      community.routeros.command:
+        commands:
+          - /ip dhcp-server lease remove [find where address={{ host_ip }}]
+      delegate_to: mtik-router
+      vars:
+        ansible_user: "{{ router.ansible_user }}"
+        ansible_ssh_pass: "{{ router.ansible_ssh_pass }}"
+
+    - name: Reboot to create new lease
+      ansible.builtin.reboot:
+      vars:
+        ansible_host: "{{ host_ip }}"
+      become: true
+
+- name: Set DCHP to static
+  community.routeros.command:
+    commands:
+      - /ip dhcp-server lease make-static [find where address={{ host_ip }}]
+  delegate_to: mtik-router
+  vars:
+    ansible_user: "{{ router.ansible_user }}"
+    ansible_ssh_pass: "{{ router.ansible_ssh_pass }}"

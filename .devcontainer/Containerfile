@@ -1,10 +1,10 @@
 FROM registry.access.redhat.com/ubi9/ubi:latest
 
 RUN dnf update -y &&\
-    dnf install -y python3 python3-pip git &&\
+    dnf install -y python3 python3-pip git iputils &&\
     dnf clean all
 
-RUN pip install --no-cache-dir ansible ansible-lint
+RUN pip install --no-cache-dir ansible ansible-lint ansible-pylibssh
 
 RUN dnf config-manager --add-repo https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo &&\
     dnf install -y terraform packer &&\

@@ -1,0 +1,83 @@
+---
+# tasks file for roles/install-aap
+- name: Permit root login for ssh
+  ansible.builtin.lineinfile:
+    dest: /etc/ssh/sshd_config
+    regexp: ^(#)?PermitRootLogin
+    line: PermitRootLogin prohibit-password
+    state: present
+  become: true
+
+- name: Authorize ssh key
+  ansible.builtin.copy:
+    dest: /root/.ssh/authorized_keys
+    content: "{{ ssh_public_key }}"
+    mode: '0644'
+    owner: root
+    group: root
+  become: true
+
+- name: Tasks run on controller
+  when: inventory_hostname in groups['aap_controller'][0]
+  block:
+
+    - name: Install AAP installer
+      ansible.builtin.dnf:
+        enablerepo: "{{ aap.repo }}"
+        name: ansible-automation-platform-installer
+        state: present
+      become: true
+
+    - name: Configure AAP isntaller inventory
+      ansible.builtin.template:
+        src: inventory.j2
+        dest: /opt/ansible-automation-platform/installer/inventory
+        mode: '0644'
+        owner: root
+        group: root
+      become: true
+
+    - name: Copy SSH private key
+      ansible.builtin.copy:
+        dest: /root/.ssh/id_rsa
+        content: "{{ ssh_private_key }}"
+        mode: '0600'
+      become: true
+
+    - name: Pause for 30 seconds
+      ansible.builtin.pause:
+        seconds: 30
+
+    - name: Install Ansible Automation Platform
+      ansible.builtin.command:
+        cmd: ./setup.sh -e required_ram={{ min_ram }}
+        chdir: /opt/ansible-automation-platform/installer
+      become: true
+      environment:
+        ANSIBLE_HOST_KEY_CHECKING: "false"
+      changed_when: true
+
+# End block
+
+- name: Add license
+  when:
+    - aap.license is defined
+    - aap.license | length > 0
+    - inventory_hostname in groups['aap_controller'][0]
+  block:
+
+    - name: Copy license to host
+      ansible.builtin.get_url:
+        url: "{{ aap.license }}"
+        dest: /opt/ansible-automation-platform/installer/manifest.zip
+        mode: '0664'
+        owner: root
+        group: root
+      become: true
+
+    - name: Apply license to Ansible Controller
+      awx.awx.license:
+        manifest: /opt/ansible-automation-platform/installer/manifest.zip
+        controller_username: admin
+        controller_password: "{{ aap.admin_password }}"
+        controller_host: "{{ inventory_hostname }}.{{ domain }}"

@@ -1,0 +1,37 @@
+- name: Install AAP on a Proxmox server
+  hosts: aap_host
+  gather_facts: false
+  vars_files:
+    - vaults/all.yml
+    - vaults/{{ group_name }}.yml
+    - vaults/provider/{{ provider }}.yml
+  tasks:
+
+    - name: Run localhost based tasks # noqa: run-once[task]
+      delegate_to: localhost
+      run_once: true
+      block:
+
+        - name: Run roles/setup-localhost
+          ansible.builtin.include_role:
+            name: setup-localhost
+
+        - name: Run roles/deploy-terraform
+          ansible.builtin.include_role:
+            name: deploy-terraform
+
+    - name: Run roles/gather-tfstate
+      ansible.builtin.include_role:
+        name: gather-tfstate
+
+    - name: Run roles/reserve-dhcp
+      ansible.builtin.include_role:
+        name: reserve-dhcp
+
+    - name: Run roles/register-redhat
+      ansible.builtin.include_role:
+        name: register-redhat
+
+    - name: Run roles/install-aap
+      ansible.builtin.include_role:
+        name: install-aap
