@@ -18,10 +18,12 @@
         ansible_host: "{{ host_ip }}"
       become: true
 
-    - name: Remove DHCP lease
+    - name: Remove DHCP reservation and DNS entry
       community.routeros.command:
         commands:
           - /ip dhcp-server lease remove [find where address={{ host_ip }}]
+          - /ip dns static remove [find where name={{ inventory_hostname }}]
+          - /ip dns static remove [find where name={{ inventory_hostname }}.{{ domain }}]
       delegate_to: mtik-router
       vars:
         ansible_user: "{{ router.ansible_user }}"
