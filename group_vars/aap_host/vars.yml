@@ -14,6 +14,7 @@ vm_config:
   max_memory: 8
   bios: seabios
   host_tags: aap;el9;rhel
+  id: 300
   pool: aap
   target_node: workpad-t14s
   template: rhel-cloud

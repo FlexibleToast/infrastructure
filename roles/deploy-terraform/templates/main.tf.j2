@@ -11,12 +11,12 @@ terraform {
 resource "proxmox_vm_qemu" "rhel-aap" {
   count = {{ groups[group_name] | length }}
   name = "{{ vm_config.basename }}-${count.index + 1}"
-  vmid = "${count.index + 300}"
+  vmid = "${count.index + {{ vm_config.id }}}"
   tags = "{{ vm_config.host_tags }}"
   target_node = "{{ vm_config.target_node }}"
   clone = "{{ vm_config.template }}"
   full_clone = {{ vm_config.full_clone | default('true') }}
-  pool = "{{ vm_config.pool | default(null) }}"
+  pool = "{{ vm_config.pool | default('') }}"
   oncreate = {{ vm_config.on_create | default('true') }}
   onboot = {{ vm_config.on_boot | default('true') }}
   agent = {{ vm_config.agent | default('1') }}
